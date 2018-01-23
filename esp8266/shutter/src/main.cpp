@@ -3,6 +3,7 @@
 #include <ESP8266WiFi.h>
 #include "../lib/arduino-mqtt/src/MQTTClient.h" // to make linter happy ....
 #include <string.h>
+#include <EEPROM.h>
 
 #define DEBUG true
 
@@ -70,9 +71,12 @@ void mqttconnect() {
 
 void setup() {
   Serial.begin(9600);
+EEPROM.begin(512);
   sprintf(st,"%x",ESP.getChipId());
   wificonnect();
   mqttconnect();
+  Serial.print("EEPROM:");
+  Serial.println(EEPROM.read(0));
 
 }
 
@@ -95,10 +99,12 @@ wificonnect();
 
     mqttconnect();
   }
+std::string y;
 std::string x="dips/";
 x+=st;
-
+y=x+"/eeprom";
 mqttclient.publish(x.c_str(),String(ultrasonic1.distanceRead()));
+mqttclient.publish(y.c_str(),String(EEPROM.read(0)));
 
   Serial.print("Sensor 01: ");
   Serial.print(ultrasonic1.distanceRead()); // Prints the distance on the default unit (centimeters)
@@ -108,13 +114,11 @@ mqttclient.publish(x.c_str(),String(ultrasonic1.distanceRead()));
 
 
 void messageReceived(String &topic, String &payload) {
-  if(topic == String("dips/")) {
-    #ifdef DEBUG
-    Serial.println("match");
-    #endif
 
-}
-#ifdef DEBUG
-  Serial.println("incoming: " + topic + " - " + payload);
+    #ifdef DEBUG
+    Serial.println("incoming: " + topic + " - " + payload);
+    EEPROM.write(0, payload.toInt());
+    EEPROM.commit();
+
 #endif
 }
