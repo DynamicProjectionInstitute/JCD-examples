@@ -5,13 +5,16 @@
 #include <string.h>
 #include <EEPROM.h>
 
-#define DEBUG true
+//#define DEBUG true //switched in  platformio.ini
 
 Ultrasonic ultrasonic1(14,12);
 
-const char ssid[] = "JCD-stock";
-const char pass[] = "jcd-stock";
-const char broker[]= "192.168.1.1";
+// const char ssid[16] = "JCD-stock";
+// const char pass[16] = "jcd-stock";
+const char ssid[16] = "JCD-79fa5412";
+const char pass[16] = "5353da83";
+
+const char broker[16]= "192.168.1.1";
 static char st[8];
 static bool ledStatus = false;
 static bool state=false;
